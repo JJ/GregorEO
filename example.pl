@@ -11,7 +11,11 @@ use Scalar::Util qw(
 use Try::Tiny;
 use Data::Dumper;
 
-use Kafka;
+use Kafka qw(
+	      $DEFAULT_MAX_BYTES
+	      $DEFAULT_MAX_NUMBER_OF_OFFSETS
+	      $RECEIVE_EARLIEST_OFFSET
+	   );
 use Kafka::Connection;
 use Kafka::Producer;
 use Kafka::Consumer;
@@ -32,7 +36,26 @@ try {
   say Dumper($response);
   #-- Consumer
   $consumer = Kafka::Consumer->new( Connection  => $connection );
+  my $messages = $consumer->fetch(
+				  'gregoreo',                      # topic
+				  0,                              # partition
+				  0,                              # offset
+				  $DEFAULT_MAX_BYTES              # Maximum size of MESSAGE(s) to receive
+				 );
   
+  if ( $messages ) {
+    foreach my $message ( @$messages ) {
+      if ( $message->valid ) {
+	say 'payload    : ', $message->payload;
+	say 'key        : ', $message->key;
+	say 'offset     : ', $message->offset;
+	say 'next_offset: ', $message->next_offset;
+      } else {
+	say 'error      : ', $message->error;
+      }
+    }
+  }
+
 } catch {
   my $error = $_;
   if ( blessed( $error ) && $error->isa( 'Kafka::Exception' ) ) {
