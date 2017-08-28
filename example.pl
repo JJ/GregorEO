@@ -9,6 +9,7 @@ use Scalar::Util qw(
 		     blessed
 		  );
 use Try::Tiny;
+use Data::Dumper;
 
 use Kafka;
 use Kafka::Connection;
@@ -27,6 +28,8 @@ try {
   $connection = Kafka::Connection->new( host => 'localhost' );
   #-- Producer
   $producer = Kafka::Producer->new( Connection => $connection );
+  my $response = $producer->send("gregoreo", 0, "0001111000" );
+  say Dumper($response);
   #-- Consumer
   $consumer = Kafka::Consumer->new( Connection  => $connection );
   
