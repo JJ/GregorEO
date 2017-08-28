@@ -10,9 +10,7 @@ use Scalar::Util qw(
 		  );
 use Try::Tiny;
 
-use Kafka qw(
-	      $BITS64
-	   );
+use Kafka;
 use Kafka::Connection;
 use Kafka::Producer;
 use Kafka::Consumer;
@@ -21,7 +19,6 @@ use Kafka::Consumer;
 
 # common information
 say 'This is Kafka package ', $Kafka::VERSION;
-say 'You have a ', $BITS64 ? '64' : '32', ' bit system';
 
 my ( $connection, $producer, $consumer );
 try {
